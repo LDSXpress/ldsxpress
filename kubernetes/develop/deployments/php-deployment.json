@@ -1,0 +1,58 @@
+{
+  "kind": "Deployment",
+  "apiVersion": "apps/v1",
+  "metadata": {
+    "name": "app-ldsxpress",
+    "namespace": "ldsxpress",
+    "labels": {
+      "tier": "backend"
+    }
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "matchLabels": {
+        "app": "app-ldsxpress",
+        "tier": "backend"
+      }
+    },
+    "strategy": {
+      "type": "RollingUpdate",
+      "rollingUpdate": {
+        "maxUnavailable": "25%",
+        "maxSurge": "25%"
+      }
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "app-ldsxpress",
+          "tier": "backend"
+        }
+      },
+      "spec": {
+        "volumes": [
+          {
+            "name": "pvc-ldsxpress",
+            "persistentVolumeClaim": {
+              "claimName": "pvc-ldsxpress"
+            }
+          }
+        ],
+        "containers": [
+          {
+            "name": "app-ldsxpress",
+            "image": "app-ldsxpress",
+            "imagePullPolicy": "IfNotPresent",
+            "volumeMounts": [
+              {
+                "name": "pvc-ldsxpress",
+                "mountPath": "/pvc-ldsxpress"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

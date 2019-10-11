@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  webserver:
+    image: nginx-ldsxpress:latest
+    build:
+      context: .
+      dockerfile: ./docker/dockerfile/nginx.dockerfile
+
+  ldsxpress-app:
+    image: app-ldsxpress:latest
+    build:
+      context: .
+      dockerfile: ./docker/dockerfile/ldsxpress-app-php.dockerfile

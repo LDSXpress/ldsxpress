@@ -1,0 +1,23 @@
+{
+  "kind": "Service",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "app-ldsxpress",
+    "namespace": "ldsxpress",
+    "labels": {
+      "tier": "backend"
+    }
+  },
+  "spec": {
+    "selector": {
+      "app": "app-ldsxpress",
+      "tier": "backend"
+    },
+    "ports": [
+      {
+        "protocol": "TCP",
+        "port": 9000
+      }
+    ]
+  }
+}

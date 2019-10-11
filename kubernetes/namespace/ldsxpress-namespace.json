@@ -1,0 +1,11 @@
+{
+  "kind": "Namespace",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "ldsxpress",
+    "labels": {
+      "application": "ldsxpress",
+      "environment": "development"
+    }
+  }
+}

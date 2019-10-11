@@ -1,0 +1,24 @@
+{
+  "kind": "Service",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "nginx",
+    "namespace": "ldsxpress",
+    "labels": {
+      "tier": "backend"
+    }
+  },
+  "spec": {
+    "type": "LoadBalancer",
+    "ports": [
+      {
+        "protocol": "TCP",
+        "port": 80,
+        "targetPort": 80
+      }
+    ],
+    "selector": {
+      "tier": "backend"
+    }
+  }
+}

@@ -1,0 +1,55 @@
+version: '3.7'
+
+services:
+  webserver:
+    image: webserver
+    build:
+      context: .
+      dockerfile: docker/dockerfile/nginx.dockerfile
+    container_name: webserver
+    volumes:
+      - ./ldsxpress:/var/www/ldsxpress
+    working_dir: /var/www/ldsxpress
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+
+  app:
+    image: app
+    build:
+      context: .
+      dockerfile: docker/dockerfile/php.dockerfile
+    container_name: php
+#    volumes:
+#      - ./ldsxpress:/var/www/ldsxpress
+    working_dir: /var/www/ldsxpress
+    ports:
+      - "9000:9000"
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAG: dev
+    networks:
+      - app-network
+
+  database:
+   image: mysql:5.7.22
+   container_name: mysql
+#   volumes:
+#     - dbdata:/var/lib/mysql
+   environment:
+     - "MYSQL_DATABASE=homestead"
+     - "MYSQL_USER=homestead"
+     - "MYSQL_PASSWORD=secret"
+     - "MYSQL_ROOT_PASSWORD=secret"
+   ports:
+     - "33061:3306"
+
+# Volumes
+volumes:
+  dbdata:
+
+# Docker Networks
+networks:
+  app-network:
+    driver: bridge
