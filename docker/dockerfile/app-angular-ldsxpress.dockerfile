@@ -1,18 +1,31 @@
 # Stage 1
-FROM node:8.16.2-alpine as node
-ARG WORKDIR=/usr/src/app
-WORKDIR ${WORKDIR}
+FROM node:10-alpine as builder
 
 COPY ./ldsxpress/ldsxpress-app/package.json ./
+COPY ./ldsxpress/ldsxpress-app/package-lock.json ./
 
-RUN npm install
+## Storing node modules on a separate layer will prevent unnecessary npm installs at each build
+RUN npm ci \
+    && mkdir /ng-app \
+    && mv ./node_modules ./ng-app
+
+WORKDIR /ng-app
 
 COPY ./ldsxpress/ldsxpress-app/ .
 
-RUN npm run build
+## Build the angular app in production mode and store the artifacts in dist folder
+RUN npm run ng build -- --prod --output-path=dist
 
-# Stage 2
-FROM nginx:stable-alpine
+# Stage 2: Setup
+FROM nginx:1.14.1-alpine
 
-COPY --from=node /usr/src/app /usr/share/nginx/html
-COPY ./docker/dockerfile/app-angular-nginx.conf /etc/nginx/conf.d/default.conf
+## Remove default nginx website
+RUN rm -rf /usr/share/nginx/html/*
+
+## From 'builder' stage copy over the artifacts in dist folder to default nginx public folder
+COPY --from=builder /ng-app/dist /usr/share/nginx/html
+
+# Copy custom nginx config
+COPY ./docker/config/nginx.conf /etc/nginx/conf.d/
+
+CMD ["nginx", "-g", "daemon off;"]
